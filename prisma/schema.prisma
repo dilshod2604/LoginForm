@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Todo {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String
+  isCompleted Boolean
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  password     String
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
