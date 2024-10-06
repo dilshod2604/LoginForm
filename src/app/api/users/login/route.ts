@@ -1,26 +1,27 @@
 import  bcrypt  from 'bcrypt';
 import prisma from "@/lib/prisma"
-import { NextApiRequest, NextApiResponse } from "next"
+import { NextResponse } from 'next/server';
 
-export const handler=async(req:NextApiRequest,res:NextApiResponse)=>{
-if(req.method==="POST"){
-    const{email,password}=req.body
 
-    const user=await prisma.user.findUnique({
-        where:email
-    })
-    if(!user){
-        return res.status(401).json({ error: 'Invalid credentials' });
+export const POST=async(req:Request)=>{
+ try {
+        const{email,password}=await req.json()
+const user=await prisma.user.findUnique({
+    where:{
+        email
     }
-     const isPasswordValid=await bcrypt.compare(password,user.password)
-     if(!isPasswordValid){
-        return res.status(401).json({ error: 'Invalid credentials' }); 
-     }
-     return res.status(200).json({ message: 'Login successful', user }); 
-}else{
-    return res.status(405).json({ error: 'Method not allowed' });
-}
+})
+if (!user) {
+    return  NextResponse.json({error:"'Invalid credentials'"},{status:401}
+)}
 
-
-
+  const isPasswordValid=await bcrypt.compare(password,user?.password)
+  if (!isPasswordValid) {
+    return  NextResponse.json({error:"'Invalid credentials'"},{status:401}
+)}
+    return NextResponse.json(user,{status:200})     
+    } catch (error) {
+        return NextResponse.json({error:'Method not allowed'},{status:405})
+    }
+    
 }
