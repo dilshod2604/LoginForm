@@ -12,7 +12,27 @@ const Login = () => {
   const { register, handleSubmit } = useForm<InputValue>();
 
   const onSubmit: SubmitHandler<InputValue> = async (value) => {
-    console.log(value);
+    try {
+      const newData = {
+        email: value.email,
+        password: value.password,
+      };
+
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newData),
+      });
+      const data = res.json();
+      if (res.ok) {
+        console.log(data, "Succsess");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    
   };
   return (
     <section className=" w-full h-screen flex items-center justify-center ">
@@ -48,7 +68,7 @@ const Login = () => {
             </button>
           </form>
           <p className="w-full text-center">or continue with</p>
-          <AuthProvidersButtons />
+          <AuthProvidersButtons />  
           <span className="flex items-center gap-x-2">
             <p className="text-sm text-neutral-100">
               Don't have an account yet?{" "}
